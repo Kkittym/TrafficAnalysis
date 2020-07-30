@@ -18,6 +18,7 @@ data = full[['Date','Speed']]
 cars = []
 row = data.iloc[0]
 car = [row['Speed']]
+month = row['Date'].split(' ')[0][3:]
 
 for i in range(1,data.shape[0]):
     row = data.iloc[i]
@@ -51,14 +52,17 @@ over40 = len([i for i in cars if i > 40 and i <= 50])
 over50 = len([i for i in cars if i > 50])
 maxSpeed = max(cars)
 d = {'Number of cars':numCars,'Average Speed':aveSpeed,'Total over 20 and less than 30':over20,'Total over 30 and less than 40':over30,'Total over 40 and less than 50':over40,'Total over 50':over50,'Max speed in the month':maxSpeed}
-data = pd.DataFrame(data=d)
+data = pd.DataFrame(data=d, index=[month])
+print(data, '\n')
 
 out = None
 try:
-    out = pd.read_excel('out.xlsx', sheet_name='raw(T)', header=1)
-    out = out.append(sheet, ignore_index=True)
+    out = pd.read_excel('out.xlsx', index_col=0)
+    print(out, '\n')
+    out = out.append(data)
+    print(out, '\n')
     out.to_excel('out.xlsx')
-except FileNotFoundError as identifier:
+except FileNotFoundError:
     data.to_excel('out.xlsx')
 
 input('All done, written to out.xlsx. Press Enter to quit')
